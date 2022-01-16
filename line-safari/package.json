@@ -1,0 +1,14 @@
+{
+  "name": "line-safari",
+  "version": "1.0.0",
+  "main": "solution.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "jest": "^27.4.7"
+  }
+}
