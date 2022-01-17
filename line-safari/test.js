@@ -120,7 +120,7 @@ describe("Example Tests", function () {
       expect(actual).toBe(false);
     });
 
-    xit("ex bad #5", function () {
+    it("ex bad #5", function () {
       var grid = makeGrid([
         "      +------+",
         "      |      |",
