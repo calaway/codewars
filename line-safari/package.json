@@ -2,13 +2,16 @@
   "name": "line-safari",
   "version": "1.0.0",
   "main": "solution.js",
+  "type": "module",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "jest": "^27.4.7"
+    "jest": "^27.4.7",
+    "prettier": "2.5.1"
   }
 }
