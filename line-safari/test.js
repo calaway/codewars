@@ -60,7 +60,7 @@ describe("Example Tests", function () {
       expect(actual).toBe(true);
     });
 
-    it("ex good #5", function () {
+    xit("ex good #5", function () {
       var grid = makeGrid([
         "                      ",
         "   +-------+          ",
@@ -84,14 +84,18 @@ describe("Example Tests", function () {
       expect(actual).toBe(false);
     });
 
-    xit("ex bad #2", function () {
+    it("ex bad #2", function () {
+      // " X  "
+      // " |  "
+      // " +  "
+      // " X  "
       var grid = makeGrid([" X  ", " |  ", " +  ", " X  "]);
       showGrid(grid);
       var actual = line(grid);
       expect(actual).toBe(false);
     });
 
-    xit("ex bad #3", function () {
+    it("ex bad #3", function () {
       var grid = makeGrid([
         "   |--------+    ",
         "X---        ---+ ",
@@ -103,7 +107,7 @@ describe("Example Tests", function () {
       expect(actual).toBe(false);
     });
 
-    xit("ex bad #4", function () {
+    it("ex bad #4", function () {
       var grid = makeGrid([
         "              ",
         "   +------    ",
