@@ -18,10 +18,10 @@ function findX(grid) {
 }
 
 function run(grid, i, j, from) {
-  const up = from !== "up" && grid.at(i - 1)?.at(j);
-  const right = from !== "right" && grid.at(i)?.at(j + 1);
-  const down = from !== "down" && grid.at(i + 1)?.at(j);
-  const left = from !== "left" && grid.at(i)?.at(j - 1);
+  const up = from !== "up" && grid[i - 1]?.[j];
+  const right = from !== "right" && grid[i]?.[j + 1];
+  const down = from !== "down" && grid[i + 1]?.[j];
+  const left = from !== "left" && grid[i]?.[j - 1];
 
   console.log("i, j, from: ", i, j, from);
   console.log("[up, right, down, left]: ", [up, right, down, left]);
