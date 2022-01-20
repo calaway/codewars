@@ -1,20 +1,24 @@
 function line(grid) {
-  let i, j;
+  const [i1, j1, i2, j2] = indexOfXs(grid);
 
-  [i, j] = findX(grid);
-
-  const isPath = run(grid, i, j, null);
+  const isPath = run(grid, i1, j1, null) || run(grid, i2, j2, null);
 
   return isPath;
 }
 
-function findX(grid) {
-  let i, j;
-  i = grid.findIndex((row) => {
-    j = row.findIndex((column) => column === "X");
-    return j > -1;
+function indexOfXs(grid) {
+  let i1, j1, i2, j2;
+  grid.forEach((row, rowIndex) => {
+    row.forEach((column, columnIndex) => {
+      if (column === "X") {
+        i1 = i2;
+        j1 = j2;
+        i2 = rowIndex;
+        j2 = columnIndex;
+      }
+    });
   });
-  return [i, j];
+  return [i1, j1, i2, j2];
 }
 
 function run(grid, i, j, from) {
