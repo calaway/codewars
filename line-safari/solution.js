@@ -1,9 +1,19 @@
 function line(grid) {
+  grid = removeSpaces(grid);
+
   const [i1, j1, i2, j2] = indexOfXs(grid);
 
   const isPath = run(grid, i1, j1, null) || run(grid, i2, j2, null);
 
   return isPath;
+}
+
+function removeSpaces(grid) {
+  return grid.map((row) => {
+    return row.map((column) => {
+      return column === " " ? null : column;
+    });
+  });
 }
 
 function indexOfXs(grid) {
@@ -23,72 +33,56 @@ function indexOfXs(grid) {
 
 function run(grid, i, j, from) {
   const current = grid[i][j];
-  let up, right, down, left;
-  if (from === "up") {
-    up = false;
-  } else if (from === "down" && current === "+") {
-    up = false;
-  } else if (grid[i - 1]?.[j] === " ") {
-    up = false;
-  } else {
-    up = grid[i - 1]?.[j];
+  const dPad = {};
+
+  dPad.up = grid[i - 1]?.[j];
+  dPad.right = grid[i]?.[j + 1];
+  dPad.down = grid[i + 1]?.[j];
+  dPad.left = grid[i]?.[j - 1];
+
+  dPad[from] = false;
+
+  if (from === "down" && current === "+") {
+    dPad.up = false;
   }
-  if (from === "right") {
-    right = false;
-  } else if (from === "left" && current === "+") {
-    right = false;
-  } else if (grid[i]?.[j + 1] === " ") {
-    right = false;
-  } else {
-    right = grid[i]?.[j + 1];
+  if (from === "left" && current === "+") {
+    dPad.right = false;
   }
-  if (from === "down") {
-    down = false;
-  } else if (from === "up" && current === "+") {
-    down = false;
-  } else if (grid[i + 1]?.[j] === " ") {
-    down = false;
-  } else {
-    down = grid[i + 1]?.[j];
+  if (from === "up" && current === "+") {
+    dPad.down = false;
   }
-  if (from === "left") {
-    left = false;
-  } else if (from === "right" && current === "+") {
-    left = false;
-  } else if (grid[i]?.[j - 1] === " ") {
-    left = false;
-  } else {
-    left = grid[i]?.[j - 1];
+  if (from === "right" && current === "+") {
+    dPad.left = false;
   }
 
-  if (from === "up" && current === "+" && left && right) {
+  // console.log("i, j, from: ", i, j, from);
+  // console.log("dPad: ", dPad);
+
+  if (from === "up" && current === "+" && dPad.left && dPad.right) {
     return false;
   }
-  if (from === "right" && current === "+" && up && down) {
+  if (from === "right" && current === "+" && dPad.up && dPad.down) {
     return false;
   }
-  if (from === "down" && current === "+" && left && right) {
+  if (from === "down" && current === "+" && dPad.left && dPad.right) {
     return false;
   }
-  if (from === "left" && current === "+" && up && down) {
+  if (from === "left" && current === "+" && dPad.up && dPad.down) {
     return false;
   }
 
-  console.log("i, j, from: ", i, j, from);
-  console.log("[up, right, down, left]: ", [up, right, down, left]);
-
-  if ([up, right, down, left].includes("X")) {
+  if (Object.values(dPad).includes("X")) {
     return true;
-  } else if (up === "|" || up === "+") {
+  } else if (dPad.up === "|" || dPad.up === "+") {
     i--;
     from = "down";
-  } else if (right === "-" || right === "+") {
+  } else if (dPad.right === "-" || dPad.right === "+") {
     j++;
     from = "left";
-  } else if (down === "|" || down === "+") {
+  } else if (dPad.down === "|" || dPad.down === "+") {
     i++;
     from = "up";
-  } else if (left === "-" || left === "+") {
+  } else if (dPad.left === "-" || dPad.left === "+") {
     j--;
     from = "right";
   } else {
