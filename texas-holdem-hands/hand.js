@@ -1,10 +1,4 @@
 function hand(holeCards, communityCards) {
-  const cardMetadata = (card) => ({
-    full: card,
-    value: card.slice(0, -1),
-    suite: card.slice(-1),
-  });
-  fullHand = [...holeCards, ...communityCards].map(cardMetadata);
   const cardRanks = {
     2: 2,
     3: 3,
@@ -20,6 +14,13 @@ function hand(holeCards, communityCards) {
     K: 13,
     A: 14,
   };
+  const cardMetadata = (card) => ({
+    full: card,
+    value: card.slice(0, -1),
+    suite: card.slice(-1),
+    rank: cardRanks[card.slice(0, -1)],
+  });
+  fullHand = [...holeCards, ...communityCards].map(cardMetadata);
 
   const valueCounts = (hand) => {
     return hand.reduce((memo, card) => {
@@ -44,7 +45,7 @@ function hand(holeCards, communityCards) {
   };
 
   const hasStraight = (hand) => {
-    const ranks = hand.map((card) => cardRanks[card.value]);
+    const ranks = hand.map((card) => card.rank);
     return ranks.some(
       (rank) =>
         ranks.includes(rank + 1) &&
@@ -76,22 +77,22 @@ function hand(holeCards, communityCards) {
       const hasPlus1 = hand.some(
         (card) =>
           card.suite === comparableCard.suite &&
-          cardRanks[card.value] === cardRanks[comparableCard.value] + 1
+          card.rank === comparableCard.rank + 1
       );
       const hasPlus2 = hand.some(
         (card) =>
           card.suite === comparableCard.suite &&
-          cardRanks[card.value] === cardRanks[comparableCard.value] + 2
+          card.rank === comparableCard.rank + 2
       );
       const hasPlus3 = hand.some(
         (card) =>
           card.suite === comparableCard.suite &&
-          cardRanks[card.value] === cardRanks[comparableCard.value] + 3
+          card.rank === comparableCard.rank + 3
       );
       const hasPlus4 = hand.some(
         (card) =>
           card.suite === comparableCard.suite &&
-          cardRanks[card.value] === cardRanks[comparableCard.value] + 4
+          card.rank === comparableCard.rank + 4
       );
       return hasPlus1 && hasPlus2 && hasPlus3 && hasPlus4;
     });
