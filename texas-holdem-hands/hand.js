@@ -111,11 +111,11 @@ function hand(holeCards, communityCards) {
   };
 
   const uniqueValues = [...new Set(fullHand.map((card) => card.value))];
-  // const ranks = uniqueValues
-  //   .sort((a, b) => cardRanks[b] - cardRanks[a])
-  //   .slice(0, 5);
+  const ranks = uniqueValues
+    .sort((a, b) => cardRanks[b] - cardRanks[a])
+    .slice(0, 5);
 
-  return { type: type(fullHand) };
+  return { type: type(fullHand), ranks };
 }
 
 module.exports = hand;
