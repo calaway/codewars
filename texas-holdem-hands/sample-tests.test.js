@@ -31,7 +31,7 @@ describe("Execute Example Tests", function () {
       // ranks: ["K", "Q", "J", "10", "9"],
     });
   });
-  xit("flush", function () {
+  it("flush", function () {
     expect(hand(["A♠", "K♦"], ["J♥", "5♥", "10♥", "Q♥", "3♥"])).toEqual({
       type: "flush",
       // ranks: ["Q", "J", "10", "5", "3"],

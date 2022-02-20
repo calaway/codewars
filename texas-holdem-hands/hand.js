@@ -2,7 +2,7 @@ function hand(holeCards, communityCards) {
   const cardMetadata = (card) => ({
     full: card,
     value: card.slice(0, -1),
-    suite: card[1],
+    suite: card.slice(-1),
   });
   fullHand = [...holeCards, ...communityCards].map(cardMetadata);
   const cardRanks = {
@@ -52,7 +52,16 @@ function hand(holeCards, communityCards) {
     );
   };
 
+  const hasFlush = (hand) =>
+    hand.some((comparableCard) => {
+      const suiteCount = hand.filter(
+        (card) => card.suite === comparableCard.suite
+      ).length;
+      return suiteCount >= 5;
+    });
+
   const type = (hand) => {
+    if (hasFlush(hand)) return "flush";
     if (hasStraight(hand)) return "straight";
     if (hasThreeOfAKind(hand)) return "three-of-a-kind";
     if (hasTwoPair(hand)) return "two pair";
