@@ -21,17 +21,30 @@ function hand(holeCards, communityCards) {
     A: 14,
   };
 
+  const valueCounts = (hand) => {
+    return hand.reduce((memo, card) => {
+      memo[card.value] ? (memo[card.value] += 1) : (memo[card.value] = 1);
+      return memo;
+    }, {});
+  };
+
   const hasPair = (hand) => {
-    values = hand.map((card) => card.value);
-    return values.some(
-      (value) => values.indexOf(value) !== values.lastIndexOf(value)
-    );
+    const pairCount = Object.values(valueCounts(hand)).filter(
+      (count) => count === 2
+    ).length;
+    return pairCount === 1;
+  };
+
+  const hasTwoPair = (hand) => {
+    const pairCount = Object.values(valueCounts(hand)).filter(
+      (count) => count === 2
+    ).length;
+    return pairCount > 1;
   };
 
   const type = (hand) => {
-    if (hasPair(hand)) {
-      return "pair";
-    }
+    if (hasTwoPair(hand)) return "two pair";
+    if (hasPair(hand)) return "pair";
     return "nothing";
   };
 
