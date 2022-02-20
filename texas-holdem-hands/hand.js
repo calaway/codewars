@@ -1,25 +1,25 @@
 function hand(holeCards, communityCards) {
   const cardMetadata = (card) => ({
     full: card,
-    value: card[0],
+    value: card.slice(0, -1),
     suite: card[1],
   });
   fullHand = [...holeCards, ...communityCards].map(cardMetadata);
-  // const cardRanks = {
-  //   2: 2,
-  //   3: 3,
-  //   4: 4,
-  //   5: 5,
-  //   6: 6,
-  //   7: 7,
-  //   8: 8,
-  //   9: 9,
-  //   10: 10,
-  //   J: 11,
-  //   Q: 12,
-  //   K: 13,
-  //   A: 14,
-  // };
+  const cardRanks = {
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
+    J: 11,
+    Q: 12,
+    K: 13,
+    A: 14,
+  };
 
   const valueCounts = (hand) => {
     return hand.reduce((memo, card) => {
@@ -41,7 +41,19 @@ function hand(holeCards, communityCards) {
   const hasThreeOfAKind = (hand) =>
     Object.values(valueCounts(hand)).some((count) => count === 3);
 
+  const hasStraight = (hand) => {
+    const ranks = hand.map((card) => cardRanks[card.value]);
+    return ranks.some(
+      (rank) =>
+        ranks.includes(rank + 1) &&
+        ranks.includes(rank + 2) &&
+        ranks.includes(rank + 3) &&
+        ranks.includes(rank + 4)
+    );
+  };
+
   const type = (hand) => {
+    if (hasStraight(hand)) return "straight";
     if (hasThreeOfAKind(hand)) return "three-of-a-kind";
     if (hasTwoPair(hand)) return "two pair";
     if (hasPair(hand)) return "pair";
