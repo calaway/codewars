@@ -28,18 +28,20 @@ function hand(holeCards, communityCards) {
     }, {});
   };
 
-  const hasPair = (hand) =>
-    Object.values(valueCounts(hand)).some((count) => count === 2);
+  const hasPair = (hand) => {
+    return Object.values(valueCounts(hand)).some((count) => count === 2);
+  };
 
   const hasTwoPair = (hand) => {
     const pairCount = Object.values(valueCounts(hand)).filter(
-      (count) => count === 2
+      (count) => count >= 2
     ).length;
     return pairCount > 1;
   };
 
-  const hasThreeOfAKind = (hand) =>
-    Object.values(valueCounts(hand)).some((count) => count === 3);
+  const hasThreeOfAKind = (hand) => {
+    return Object.values(valueCounts(hand)).some((count) => count === 3);
+  };
 
   const hasStraight = (hand) => {
     const ranks = hand.map((card) => cardRanks[card.value]);
@@ -52,15 +54,21 @@ function hand(holeCards, communityCards) {
     );
   };
 
-  const hasFlush = (hand) =>
-    hand.some((comparableCard) => {
+  const hasFlush = (hand) => {
+    return hand.some((comparableCard) => {
       const suiteCount = hand.filter(
         (card) => card.suite === comparableCard.suite
       ).length;
       return suiteCount >= 5;
     });
+  };
+
+  const hasFullHouse = (hand) => {
+    return hasThreeOfAKind(hand) && hasTwoPair(hand);
+  };
 
   const type = (hand) => {
+    if (hasFullHouse(hand)) return "full house";
     if (hasFlush(hand)) return "flush";
     if (hasStraight(hand)) return "straight";
     if (hasThreeOfAKind(hand)) return "three-of-a-kind";
