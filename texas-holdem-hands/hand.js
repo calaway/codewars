@@ -67,7 +67,12 @@ function hand(holeCards, communityCards) {
     return hasThreeOfAKind(hand) && hasTwoPair(hand);
   };
 
+  const hasFourOfAKind = (hand) => {
+    return Object.values(valueCounts(hand)).some((count) => count === 4);
+  };
+
   const type = (hand) => {
+    if (hasFourOfAKind(hand)) return "four-of-a-kind";
     if (hasFullHouse(hand)) return "full house";
     if (hasFlush(hand)) return "flush";
     if (hasStraight(hand)) return "straight";

@@ -43,7 +43,7 @@ describe("Execute Example Tests", function () {
       // ranks: ["A", "K"],
     });
   });
-  xit("four-of-a-kind", function () {
+  it("four-of-a-kind", function () {
     expect(hand(["2♠", "3♦"], ["2♣", "2♥", "3♠", "3♥", "2♦"])).toEqual({
       type: "four-of-a-kind",
       // ranks: ["2", "3"],
