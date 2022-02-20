@@ -49,7 +49,7 @@ describe("Execute Example Tests", function () {
       // ranks: ["2", "3"],
     });
   });
-  xit("straight-flush", function () {
+  it("straight-flush", function () {
     expect(hand(["8♠", "6♠"], ["7♠", "5♠", "9♠", "J♠", "10♠"])).toEqual({
       type: "straight-flush",
       // ranks: ["J", "10", "9", "8", "7"],

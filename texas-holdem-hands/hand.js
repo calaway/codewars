@@ -71,7 +71,34 @@ function hand(holeCards, communityCards) {
     return Object.values(valueCounts(hand)).some((count) => count === 4);
   };
 
+  const hasStraightFlush = (hand) => {
+    return hand.some((comparableCard) => {
+      const hasPlus1 = hand.some(
+        (card) =>
+          card.suite === comparableCard.suite &&
+          cardRanks[card.value] === cardRanks[comparableCard.value] + 1
+      );
+      const hasPlus2 = hand.some(
+        (card) =>
+          card.suite === comparableCard.suite &&
+          cardRanks[card.value] === cardRanks[comparableCard.value] + 2
+      );
+      const hasPlus3 = hand.some(
+        (card) =>
+          card.suite === comparableCard.suite &&
+          cardRanks[card.value] === cardRanks[comparableCard.value] + 3
+      );
+      const hasPlus4 = hand.some(
+        (card) =>
+          card.suite === comparableCard.suite &&
+          cardRanks[card.value] === cardRanks[comparableCard.value] + 4
+      );
+      return hasPlus1 && hasPlus2 && hasPlus3 && hasPlus4;
+    });
+  };
+
   const type = (hand) => {
+    if (hasStraightFlush(hand)) return "straight-flush";
     if (hasFourOfAKind(hand)) return "four-of-a-kind";
     if (hasFullHouse(hand)) return "full house";
     if (hasFlush(hand)) return "flush";
