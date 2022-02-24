@@ -29,22 +29,34 @@ function hand(holeCards, communityCards) {
     }, {});
   };
 
-  const hasPair = (hand) => {
-    return Object.values(valueCounts(hand)).some((count) => count === 2);
+  const nothing = (hand) => ({
+    type: "nothing",
+    typeRanks: [],
+    typeCardCound: 0,
+  });
+
+  const pair = (hand) => {
+    const pairValue = Object.entries(valueCounts(hand)).find(
+      ([_value, count]) => count === 2
+    )?.[0];
+    if (pairValue) {
+      return { type: "pair", typeRanks: [pairValue], typeCardCound: 2 };
+    }
+    return false;
   };
 
-  const hasTwoPair = (hand) => {
+  const twoPair = (hand) => {
     const pairCount = Object.values(valueCounts(hand)).filter(
       (count) => count >= 2
     ).length;
     return pairCount > 1;
   };
 
-  const hasThreeOfAKind = (hand) => {
+  const threeOfAKind = (hand) => {
     return Object.values(valueCounts(hand)).some((count) => count === 3);
   };
 
-  const hasStraight = (hand) => {
+  const straight = (hand) => {
     const ranks = hand.map((card) => card.rank);
     return ranks.some(
       (rank) =>
@@ -55,7 +67,7 @@ function hand(holeCards, communityCards) {
     );
   };
 
-  const hasFlush = (hand) => {
+  const flush = (hand) => {
     return hand.some((comparableCard) => {
       const suiteCount = hand.filter(
         (card) => card.suite === comparableCard.suite
@@ -64,15 +76,15 @@ function hand(holeCards, communityCards) {
     });
   };
 
-  const hasFullHouse = (hand) => {
-    return hasThreeOfAKind(hand) && hasTwoPair(hand);
+  const fullHouse = (hand) => {
+    return threeOfAKind(hand) && twoPair(hand);
   };
 
-  const hasFourOfAKind = (hand) => {
+  const fourOfAKind = (hand) => {
     return Object.values(valueCounts(hand)).some((count) => count === 4);
   };
 
-  const hasStraightFlush = (hand) => {
+  const straightFlush = (hand) => {
     return hand.some((comparableCard) => {
       const hasPlus1 = hand.some(
         (card) =>
@@ -98,24 +110,43 @@ function hand(holeCards, communityCards) {
     });
   };
 
-  const type = (hand) => {
-    if (hasStraightFlush(hand)) return "straight-flush";
-    if (hasFourOfAKind(hand)) return "four-of-a-kind";
-    if (hasFullHouse(hand)) return "full house";
-    if (hasFlush(hand)) return "flush";
-    if (hasStraight(hand)) return "straight";
-    if (hasThreeOfAKind(hand)) return "three-of-a-kind";
-    if (hasTwoPair(hand)) return "two pair";
-    if (hasPair(hand)) return "pair";
-    return "nothing";
+  const determineType = (hand) => {
+    return (
+      straightFlush(hand) ||
+      fourOfAKind(hand) ||
+      fullHouse(hand) ||
+      flush(hand) ||
+      straight(hand) ||
+      threeOfAKind(hand) ||
+      twoPair(hand) ||
+      pair(hand) ||
+      nothing(hand)
+    );
   };
 
-  const uniqueValues = [...new Set(fullHand.map((card) => card.value))];
-  const ranks = uniqueValues
-    .sort((a, b) => cardRanks[b] - cardRanks[a])
-    .slice(0, 5);
+  const determineRanks = (hand, typeRanks, typeCardCound) => {
+    const uniqueValues = (values) => [...new Set(values)];
+    const uniqueRanking = (values) =>
+      uniqueValues(values)
+        .sort((a, b) => cardRanks[b] - cardRanks[a])
+        .slice(0, 5);
+    const typeRanking = uniqueRanking(typeRanks);
+    const secondaryRanking = uniqueRanking(
+      hand.map((card) => card.value)
+    ).slice(0, 6 - typeCardCound);
+    const overallRanking = uniqueValues([...typeRanking, ...secondaryRanking]);
+    return overallRanking;
+  };
 
-  return { type: type(fullHand), ranks };
+  const typeMetadata = determineType(fullHand);
+  const type = typeMetadata.type;
+  const ranks = determineRanks(
+    fullHand,
+    typeMetadata.typeRanks,
+    typeMetadata.typeCardCound
+  );
+
+  return { type, ranks };
 }
 
 module.exports = hand;
