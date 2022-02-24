@@ -104,12 +104,17 @@ function hand(holeCards, communityCards) {
   };
 
   const flush = (hand) => {
-    return hand.some((comparableCard) => {
+    const suite = hand.find((comparableCard) => {
       const suiteCount = hand.filter(
         (card) => card.suite === comparableCard.suite
       ).length;
       return suiteCount >= 5;
-    });
+    })?.suite;
+    if (!suite) return false;
+    const values = hand
+      .filter((card) => card.suite === suite)
+      .map((card) => card.value);
+    return { type: "flush", typeRanks: values, rankCardQuantity: 5 };
   };
 
   const fullHouse = (hand) => {
