@@ -32,7 +32,7 @@ function hand(holeCards, communityCards) {
   const nothing = (hand) => ({
     type: "nothing",
     typeRanks: [],
-    typeCardCound: 0,
+    rankCardQuantity: 5,
   });
 
   const pair = (hand) => {
@@ -40,16 +40,19 @@ function hand(holeCards, communityCards) {
       ([_value, count]) => count === 2
     )?.[0];
     if (pairValue) {
-      return { type: "pair", typeRanks: [pairValue], typeCardCound: 2 };
+      return { type: "pair", typeRanks: [pairValue], rankCardQuantity: 4 };
     }
     return false;
   };
 
   const twoPair = (hand) => {
-    const pairCount = Object.values(valueCounts(hand)).filter(
-      (count) => count >= 2
-    ).length;
-    return pairCount > 1;
+    const pairValues = Object.entries(valueCounts(hand))
+      .filter(([_value, count]) => count === 2)
+      ?.map((pair) => pair[0]);
+    if (pairValues.length > 1) {
+      return { type: "two pair", typeRanks: pairValues, rankCardQuantity: 3 };
+    }
+    return false;
   };
 
   const threeOfAKind = (hand) => {
@@ -124,17 +127,18 @@ function hand(holeCards, communityCards) {
     );
   };
 
-  const determineRanks = (hand, typeRanks, typeCardCound) => {
+  const determineRanks = (hand, typeRanks, rankCardQuantity) => {
     const uniqueValues = (values) => [...new Set(values)];
     const uniqueRanking = (values) =>
       uniqueValues(values)
         .sort((a, b) => cardRanks[b] - cardRanks[a])
         .slice(0, 5);
     const typeRanking = uniqueRanking(typeRanks);
-    const secondaryRanking = uniqueRanking(
-      hand.map((card) => card.value)
-    ).slice(0, 6 - typeCardCound);
-    const overallRanking = uniqueValues([...typeRanking, ...secondaryRanking]);
+    const secondaryRanking = uniqueRanking(hand.map((card) => card.value));
+    const overallRanking = uniqueValues([
+      ...typeRanking,
+      ...secondaryRanking,
+    ]).slice(0, rankCardQuantity);
     return overallRanking;
   };
 
@@ -143,7 +147,7 @@ function hand(holeCards, communityCards) {
   const ranks = determineRanks(
     fullHand,
     typeMetadata.typeRanks,
-    typeMetadata.typeCardCound
+    typeMetadata.rankCardQuantity
   );
 
   return { type, ranks };

@@ -13,7 +13,7 @@ describe("Execute Example Tests", function () {
       ranks: ["Q", "K", "J", "9"],
     });
   });
-  xit("two pair", function () {
+  it("two pair", function () {
     expect(hand(["K♠", "J♦"], ["J♣", "K♥", "9♥", "2♥", "3♦"])).toEqual({
       type: "two pair",
       ranks: ["K", "J", "9"],
