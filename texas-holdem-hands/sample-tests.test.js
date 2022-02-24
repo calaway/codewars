@@ -25,7 +25,7 @@ describe("Execute Example Tests", function () {
       ranks: ["Q", "J", "9"],
     });
   });
-  xit("straight", function () {
+  it("straight", function () {
     expect(hand(["Q♠", "2♦"], ["J♣", "10♥", "9♥", "K♥", "3♦"])).toEqual({
       type: "straight",
       ranks: ["K", "Q", "J", "10", "9"],

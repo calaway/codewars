@@ -71,13 +71,36 @@ function hand(holeCards, communityCards) {
 
   const straight = (hand) => {
     const ranks = hand.map((card) => card.rank);
-    return ranks.some(
+    const firstRank = ranks.find(
       (rank) =>
         ranks.includes(rank + 1) &&
         ranks.includes(rank + 2) &&
         ranks.includes(rank + 3) &&
         ranks.includes(rank + 4)
     );
+    if (firstRank) {
+      const allValues = [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "J",
+        "Q",
+        "K",
+        "A",
+      ];
+      return {
+        type: "straight",
+        typeRanks: allValues.slice(firstRank - 2, firstRank + 3),
+        rankCardQuantity: 5,
+      };
+    }
+    return false;
   };
 
   const flush = (hand) => {
