@@ -19,7 +19,7 @@ describe("Execute Example Tests", function () {
       ranks: ["K", "J", "9"],
     });
   });
-  xit("three-of-a-kind", function () {
+  it("three-of-a-kind", function () {
     expect(hand(["4♠", "9♦"], ["J♣", "Q♥", "Q♠", "2♥", "Q♦"])).toEqual({
       type: "three-of-a-kind",
       ranks: ["Q", "J", "9"],

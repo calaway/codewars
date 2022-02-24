@@ -56,7 +56,17 @@ function hand(holeCards, communityCards) {
   };
 
   const threeOfAKind = (hand) => {
-    return Object.values(valueCounts(hand)).some((count) => count === 3);
+    const threeOfAKindValue = Object.entries(valueCounts(hand)).find(
+      ([_value, count]) => count === 3
+    )?.[0];
+    if (threeOfAKindValue) {
+      return {
+        type: "three-of-a-kind",
+        typeRanks: [threeOfAKindValue],
+        rankCardQuantity: 3,
+      };
+    }
+    return false;
   };
 
   const straight = (hand) => {
