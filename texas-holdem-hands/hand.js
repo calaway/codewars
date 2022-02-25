@@ -133,7 +133,17 @@ function hand(holeCards, communityCards) {
   };
 
   const fourOfAKind = (hand) => {
-    return Object.values(valueCounts(hand)).some((count) => count === 4);
+    const fourOfAKindValue = Object.entries(valueCounts(hand)).find(
+      ([_value, count]) => count === 4
+    )?.[0];
+    if (fourOfAKindValue) {
+      return {
+        type: "four-of-a-kind",
+        typeRanks: [fourOfAKindValue],
+        rankCardQuantity: 2,
+      };
+    }
+    return false;
   };
 
   const straightFlush = (hand) => {
