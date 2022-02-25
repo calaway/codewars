@@ -110,15 +110,26 @@ function hand(holeCards, communityCards) {
       ).length;
       return suiteCount >= 5;
     })?.suite;
-    if (!suite) return false;
-    const values = hand
-      .filter((card) => card.suite === suite)
-      .map((card) => card.value);
-    return { type: "flush", typeRanks: values, rankCardQuantity: 5 };
+    if (suite) {
+      const values = hand
+        .filter((card) => card.suite === suite)
+        .map((card) => card.value);
+      return { type: "flush", typeRanks: values, rankCardQuantity: 5 };
+    }
+    return false;
   };
 
   const fullHouse = (hand) => {
-    return threeOfAKind(hand) && twoPair(hand);
+    const pairValues = pair(hand)?.typeRanks;
+    const threeOfAKindValues = threeOfAKind(hand)?.typeRanks;
+    if (pairValues && threeOfAKindValues) {
+      return {
+        type: "full house",
+        typeRanks: [...pairValues, ...threeOfAKindValues],
+        rankCardQuantity: 2,
+      };
+    }
+    return false;
   };
 
   const fourOfAKind = (hand) => {
