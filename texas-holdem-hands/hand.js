@@ -20,7 +20,9 @@ function hand(holeCards, communityCards) {
     suite: card.slice(-1),
     rank: cardRanks[card.slice(0, -1)],
   });
-  fullHand = [...holeCards, ...communityCards].map(cardMetadata);
+  fullHand = [...holeCards, ...communityCards]
+    .map(cardMetadata)
+    .sort((cardA, cardB) => cardB.rank - cardA.rank);
 
   const valueCounts = (hand) => {
     return hand.reduce((memo, card) => {
@@ -147,29 +149,40 @@ function hand(holeCards, communityCards) {
   };
 
   const straightFlush = (hand) => {
-    return hand.some((comparableCard) => {
-      const hasPlus1 = hand.some(
+    let values = [];
+    hand.some((comparableCard) => {
+      const plus1 = hand.find(
         (card) =>
           card.suite === comparableCard.suite &&
           card.rank === comparableCard.rank + 1
       );
-      const hasPlus2 = hand.some(
+      const plus2 = hand.find(
         (card) =>
           card.suite === comparableCard.suite &&
           card.rank === comparableCard.rank + 2
       );
-      const hasPlus3 = hand.some(
+      const plus3 = hand.find(
         (card) =>
           card.suite === comparableCard.suite &&
           card.rank === comparableCard.rank + 3
       );
-      const hasPlus4 = hand.some(
+      const plus4 = hand.find(
         (card) =>
           card.suite === comparableCard.suite &&
           card.rank === comparableCard.rank + 4
       );
-      return hasPlus1 && hasPlus2 && hasPlus3 && hasPlus4;
+      if (plus1 && plus2 && plus3 && plus4) {
+        values = [comparableCard, plus1, plus2, plus3, plus4].map(
+          (card) => card.value
+        );
+        return true;
+      }
+      return false;
     });
+    if (values.length !== 0) {
+      return { type: "straight-flush", typeRanks: values, rankCardQuantity: 5 };
+    }
+    return false;
   };
 
   const determineType = (hand) => {
