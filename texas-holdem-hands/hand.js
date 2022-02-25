@@ -15,16 +15,15 @@ function hand(holeCards, communityCards) {
     A: 14,
   };
   const cardMetadata = (card) => ({
-    full: card,
     value: card.slice(0, -1),
     suite: card.slice(-1),
     rank: cardRanks[card.slice(0, -1)],
   });
-  hand = [...holeCards, ...communityCards]
+  const hand = [...holeCards, ...communityCards]
     .map(cardMetadata)
     .sort((cardA, cardB) => cardB.rank - cardA.rank);
 
-  const valueCounts = (hand) => {
+  const valueTallies = (hand) => {
     return hand.reduce((memo, card) => {
       memo[card.value] ? (memo[card.value] += 1) : (memo[card.value] = 1);
       return memo;
@@ -38,35 +37,34 @@ function hand(holeCards, communityCards) {
   });
 
   const pair = (hand) => {
-    const pairValue = Object.entries(valueCounts(hand)).find(
+    const match = Object.entries(valueTallies(hand)).find(
       ([_value, count]) => count === 2
-    )?.[0];
-    if (pairValue) {
-      return { type: "pair", values: [pairValue], rankCardQuantity: 4 };
+    );
+    if (match) {
+      const values = [match[0]];
+      return { type: "pair", values, rankCardQuantity: 4 };
     }
     return false;
   };
 
   const twoPair = (hand) => {
-    const pairValues = Object.entries(valueCounts(hand))
-      .filter(([_value, count]) => count === 2)
-      ?.map((pair) => pair[0]);
-    if (pairValues.length > 1) {
-      return { type: "two pair", values: pairValues, rankCardQuantity: 3 };
+    const match = Object.entries(valueTallies(hand)).filter(
+      ([_value, count]) => count === 2
+    );
+    if (match.length > 1) {
+      const values = match.map((pair) => pair[0]);
+      return { type: "two pair", values, rankCardQuantity: 3 };
     }
     return false;
   };
 
   const threeOfAKind = (hand) => {
-    const threeOfAKindValue = Object.entries(valueCounts(hand)).find(
+    const match = Object.entries(valueTallies(hand)).find(
       ([_value, count]) => count === 3
-    )?.[0];
-    if (threeOfAKindValue) {
-      return {
-        type: "three-of-a-kind",
-        values: [threeOfAKindValue],
-        rankCardQuantity: 3,
-      };
+    );
+    if (match) {
+      values = [match[0]];
+      return { type: "three-of-a-kind", values, rankCardQuantity: 3 };
     }
     return false;
   };
@@ -106,44 +104,38 @@ function hand(holeCards, communityCards) {
   };
 
   const flush = (hand) => {
-    const suite = hand.find((comparableCard) => {
+    const match = hand.find((comparableCard) => {
       const suiteCount = hand.filter(
         (card) => card.suite === comparableCard.suite
       ).length;
       return suiteCount >= 5;
-    })?.suite;
-    if (suite) {
+    });
+    if (match) {
       const values = hand
-        .filter((card) => card.suite === suite)
+        .filter((card) => card.suite === match.suite)
         .map((card) => card.value);
-      return { type: "flush", values: values, rankCardQuantity: 5 };
+      return { type: "flush", values, rankCardQuantity: 5 };
     }
     return false;
   };
 
   const fullHouse = (hand) => {
-    const pairValues = pair(hand)?.values;
-    const threeOfAKindValues = threeOfAKind(hand)?.values;
+    const pairValues = pair(hand) && pair(hand).values;
+    const threeOfAKindValues = threeOfAKind(hand) && threeOfAKind(hand).values;
     if (pairValues && threeOfAKindValues) {
-      return {
-        type: "full house",
-        values: [...pairValues, ...threeOfAKindValues],
-        rankCardQuantity: 2,
-      };
+      const values = [...pairValues, ...threeOfAKindValues];
+      return { type: "full house", values, rankCardQuantity: 2 };
     }
     return false;
   };
 
   const fourOfAKind = (hand) => {
-    const fourOfAKindValue = Object.entries(valueCounts(hand)).find(
+    const match = Object.entries(valueTallies(hand)).find(
       ([_value, count]) => count === 4
-    )?.[0];
-    if (fourOfAKindValue) {
-      return {
-        type: "four-of-a-kind",
-        values: [fourOfAKindValue],
-        rankCardQuantity: 2,
-      };
+    );
+    if (match) {
+      const values = [match[0]];
+      return { type: "four-of-a-kind", values, rankCardQuantity: 2 };
     }
     return false;
   };
