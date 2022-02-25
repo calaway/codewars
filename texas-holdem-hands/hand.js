@@ -20,7 +20,7 @@ function hand(holeCards, communityCards) {
     suite: card.slice(-1),
     rank: cardRanks[card.slice(0, -1)],
   });
-  fullHand = [...holeCards, ...communityCards]
+  hand = [...holeCards, ...communityCards]
     .map(cardMetadata)
     .sort((cardA, cardB) => cardB.rank - cardA.rank);
 
@@ -33,7 +33,7 @@ function hand(holeCards, communityCards) {
 
   const nothing = (hand) => ({
     type: "nothing",
-    typeRanks: [],
+    values: [],
     rankCardQuantity: 5,
   });
 
@@ -42,7 +42,7 @@ function hand(holeCards, communityCards) {
       ([_value, count]) => count === 2
     )?.[0];
     if (pairValue) {
-      return { type: "pair", typeRanks: [pairValue], rankCardQuantity: 4 };
+      return { type: "pair", values: [pairValue], rankCardQuantity: 4 };
     }
     return false;
   };
@@ -52,7 +52,7 @@ function hand(holeCards, communityCards) {
       .filter(([_value, count]) => count === 2)
       ?.map((pair) => pair[0]);
     if (pairValues.length > 1) {
-      return { type: "two pair", typeRanks: pairValues, rankCardQuantity: 3 };
+      return { type: "two pair", values: pairValues, rankCardQuantity: 3 };
     }
     return false;
   };
@@ -64,7 +64,7 @@ function hand(holeCards, communityCards) {
     if (threeOfAKindValue) {
       return {
         type: "three-of-a-kind",
-        typeRanks: [threeOfAKindValue],
+        values: [threeOfAKindValue],
         rankCardQuantity: 3,
       };
     }
@@ -98,7 +98,7 @@ function hand(holeCards, communityCards) {
       ];
       return {
         type: "straight",
-        typeRanks: allValues.slice(firstRank - 2, firstRank + 3),
+        values: allValues.slice(firstRank - 2, firstRank + 3),
         rankCardQuantity: 5,
       };
     }
@@ -116,18 +116,18 @@ function hand(holeCards, communityCards) {
       const values = hand
         .filter((card) => card.suite === suite)
         .map((card) => card.value);
-      return { type: "flush", typeRanks: values, rankCardQuantity: 5 };
+      return { type: "flush", values: values, rankCardQuantity: 5 };
     }
     return false;
   };
 
   const fullHouse = (hand) => {
-    const pairValues = pair(hand)?.typeRanks;
-    const threeOfAKindValues = threeOfAKind(hand)?.typeRanks;
+    const pairValues = pair(hand)?.values;
+    const threeOfAKindValues = threeOfAKind(hand)?.values;
     if (pairValues && threeOfAKindValues) {
       return {
         type: "full house",
-        typeRanks: [...pairValues, ...threeOfAKindValues],
+        values: [...pairValues, ...threeOfAKindValues],
         rankCardQuantity: 2,
       };
     }
@@ -141,7 +141,7 @@ function hand(holeCards, communityCards) {
     if (fourOfAKindValue) {
       return {
         type: "four-of-a-kind",
-        typeRanks: [fourOfAKindValue],
+        values: [fourOfAKindValue],
         rankCardQuantity: 2,
       };
     }
@@ -180,7 +180,7 @@ function hand(holeCards, communityCards) {
       return false;
     });
     if (values.length !== 0) {
-      return { type: "straight-flush", typeRanks: values, rankCardQuantity: 5 };
+      return { type: "straight-flush", values: values, rankCardQuantity: 5 };
     }
     return false;
   };
@@ -199,26 +199,26 @@ function hand(holeCards, communityCards) {
     );
   };
 
-  const determineRanks = (hand, typeRanks, rankCardQuantity) => {
+  const determineRanks = (hand, primaryValues, rankCardQuantity) => {
     const uniqueValues = (values) => [...new Set(values)];
     const uniqueRanking = (values) =>
       uniqueValues(values)
         .sort((a, b) => cardRanks[b] - cardRanks[a])
         .slice(0, 5);
-    const typeRanking = uniqueRanking(typeRanks);
+    const primaryRanking = uniqueRanking(primaryValues);
     const secondaryRanking = uniqueRanking(hand.map((card) => card.value));
     const overallRanking = uniqueValues([
-      ...typeRanking,
+      ...primaryRanking,
       ...secondaryRanking,
     ]).slice(0, rankCardQuantity);
     return overallRanking;
   };
 
-  const typeMetadata = determineType(fullHand);
+  const typeMetadata = determineType(hand);
   const type = typeMetadata.type;
   const ranks = determineRanks(
-    fullHand,
-    typeMetadata.typeRanks,
+    hand,
+    typeMetadata.values,
     typeMetadata.rankCardQuantity
   );
 
